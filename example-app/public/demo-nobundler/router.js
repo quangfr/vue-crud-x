@@ -1,10 +1,6 @@
 import store from './store.js'
-import Dashboard from './views/dashboard.js'
-import Admin from './views/admin.js'
-import SignIn from './views/signin.js'
 
 const { createRouter, createWebHistory } = VueRouter
-
 const routerHistory = createWebHistory()
 
 const AuthGuard = async (to, from, next) => {
@@ -17,7 +13,7 @@ const AuthGuard = async (to, from, next) => {
   } else if (!loggedIn && requiresAuth) {
     return next('/signin')
   } else if (loggedIn && !requiresAuth) {
-    return next('/dashboard')
+    return next('/predict')
   } else {
     // should not get here
     // console.log(loggedIn, requiresAuth)
@@ -34,22 +30,36 @@ const router = createRouter({
       // props: (route) => {
       //   return { storeName: route.name, parentId: route.params.parentId || null }
       // },
-      path: '/dashboard',
-      component: Dashboard, // () => import('./views/about.js') // TBD use lazy loading
-      name: 'dashboard'
+      path: '/predict',
+      component: () => import('./views/predict/index.js'),
+      name: 'predict'
     },
     {
       meta: { requiresAuth: true, layout: 'layout-secure' },
       beforeEnter: AuthGuard,
-      path: '/admin',
-      component: Admin, // () => import('./views/about.js') // TBD use lazy loading
-      name: 'admin'
+      path: '/cnn-train',
+      component: () => import('./views/cnnTrain.js'),
+      name: 'cnn-train'
+    },
+    {
+      meta: { requiresAuth: true, layout: 'layout-secure' },
+      beforeEnter: AuthGuard,
+      path: '/yolov5-train',
+      component: () => import('./views/yolov5Train.js'),
+      name: 'yolov5-train'
+    },
+    {
+      meta: { requiresAuth: true, layout: 'layout-secure' },
+      beforeEnter: AuthGuard,
+      path: '/cnn-models',
+      component: () => import('./views/cnnModels.js'),
+      name: 'cnn-models'
     },
     {
       meta: { requiresAuth: false, layout: 'layout-public' },
       path: '/',
-      name: 'signIn',
-      component: SignIn
+      component: () => import('./views/signin.js'),
+      name: 'signIn'
     },
     {
       meta: { requiresAuth: false, layout: 'layout-public' },

@@ -3,21 +3,29 @@ import Public from './layouts/public.js'
 
 const { onMounted, computed } = Vue
 const { useStore } = Vuex
+const { useRoute } = VueRouter
 
 export default {
   components: {
-    'ms-secure': Secure,
-    'ms-public': Public
+    'layout-secure': Secure,
+    'layout-public': Public
   },
+
   template: /*html*/`
     <div>
-      <!-- h1>App<a href="/index.html">Back To Express Demo</a></h1 -->
-      <ms-public v-if="!storeUser" />
-      <ms-secure v-else />
+      <component :is="route.meta.layout || 'layout-public'"></component>
     </div>
   `,
+  // template: /*html*/`
+  //   <div>
+  //     <!-- h1>App<a href="/index.html">Back To Express Demo</a></h1 -->
+  //     <layout-public v-if="!storeUser" />
+  //     <layout-secure v-else />
+  //   </div>
+  // `,
   setup() {
     const store = useStore()
+    const route = useRoute()
     const storeUser = computed(() => store.state.user)
 
     onMounted(async () => {
@@ -25,6 +33,7 @@ export default {
     })
 
     return {
+      route,
       storeUser
     }
   }

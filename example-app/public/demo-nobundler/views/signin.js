@@ -83,7 +83,7 @@ export default {
 
     const login = () => {
       store.commit('setUser', email.value)
-      router.push('/dashboard')
+      router.push('/predict')
     }
 
     return {

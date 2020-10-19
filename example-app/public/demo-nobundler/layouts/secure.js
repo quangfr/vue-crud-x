@@ -48,8 +48,10 @@ const template = /*html*/`
   <aside v-show="showSide" class="menu nice-scroll">
     <p class="menu-label">General</p>
     <ul class="menu-list">
-      <li><router-link :to="{ path: '/dashboard' }">Dashboard</router-link></li>
-      <li><router-link :to="{ path: '/admin' }">Admin</router-link></li>
+      <li><router-link :to="{ path: '/predict' }">Predict Infer</router-link></li>
+      <li><router-link :to="{ path: '/cnn-train' }">CNN Train</router-link></li>
+      <li><router-link :to="{ path: '/yolov5-train' }">yolov5 Train</router-link></li>
+      <li><router-link :to="{ path: '/cnn-models' }">CNN Models</router-link></li>
     </ul>
     <ul class="menu-list">
       <li>
@@ -123,7 +125,7 @@ export default {
     }
     const logout = () => {
       store.commit('setUser', null)
-      router.push('/') // if /dashboard should be kicked back to / 
+      router.push('/')
     }
     return {
       clickLogo,

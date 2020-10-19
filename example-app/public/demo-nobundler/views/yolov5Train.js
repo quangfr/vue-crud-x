@@ -1,6 +1,6 @@
 const template = /*html*/`
 <div>
-  <h1>Admin</h1>
+  <h1>Yolo V5</h1>
 </div>
 `
 
@@ -10,7 +10,7 @@ export default {
   template,
   setup() {
     onMounted(async () => {
-      console.log('Admin mounted!')
+      console.log('Dashboard mounted!')
     })
     return {
     }
