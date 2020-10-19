@@ -23,6 +23,7 @@ const AuthGuard = async (to, from, next) => {
 
 const router = createRouter({
   history: routerHistory,
+  linkActiveClass: 'is-active',
   routes: [
     {
       meta: { requiresAuth: true, layout: 'layout-secure' },
