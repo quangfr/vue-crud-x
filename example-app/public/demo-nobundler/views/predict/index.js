@@ -97,10 +97,13 @@ const template = /*html*/`
   <!-- Table View Tab -->
   <div class="container" v-else-if="activeTab==='Table View'">
     <h1>Table View</h1>
+    <table-result></table-result>
   </div>
 </div>
 `
+
 import { post, get } from '../../lib/esm/http.js'
+import TableResult from './TableResult.js'
 
 const { onMounted, onUnmounted, ref, reactive } = Vue
 
@@ -114,6 +117,9 @@ const { onMounted, onUnmounted, ref, reactive } = Vue
 
 export default {
   template,
+  components: {
+    'table-result': TableResult
+  },
   setup() {
     const loading = ref(false)
     const activeTab = ref('Image View')
@@ -122,7 +128,7 @@ export default {
       jobName: '',
       cnnModel: '',
       yolov5Model: 'fnb_yolov5',
-      yolov5ConfThreshold: 4.0,
+      yolov5ConfThreshold: 0.4,
       imgInputOption: 'imgPath',
       imgPath: '/dscco_nfs/shiny-server/public/Emerson/www/Data/FlangeAndBolt/TrainingSet/316_CS_Bolt'
     })
@@ -148,8 +154,8 @@ export default {
         // const rv = await get('http://kuldldsccappo01.kul.apac.dell.com:8080/api/healthcheck')
         // console.log(rv)
         const rv = await post('http://kuldldsccappo01.kul.apac.dell.com:8080/api/emerson', {
-          yolov5Model: 'fnb_yolov5',
-          yolov5ConfThreshold: 4.0,
+          yolov5Model: form.yolov5Model,
+          yolov5ConfThreshold: form.yolov5ConfThreshold,
           imgPath: '/dscco_nfs/shiny-server/public/Emerson/www/Data/FlangeAndBolt/TrainingSet/316_CS_Bolt'
         })
         console.log(rv)
@@ -157,6 +163,7 @@ export default {
       }
       loading.value = false
     }
+
     const clickTab = (e) => {
       activeTab.value = e.target.textContent
       document.querySelectorAll('.tab').forEach((el) => {
