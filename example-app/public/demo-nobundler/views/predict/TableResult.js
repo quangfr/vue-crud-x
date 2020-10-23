@@ -3,6 +3,7 @@ const template = /*html*/`
 <div class="container">
   <vcxwc-loading-overlay v-if="loading"></vcxwc-loading-overlay>
   <div class="box">
+    <h1>Results</h1>
     <div class="field is-grouped">
 
       <div v-if="results.folders.length" class="control">
@@ -18,7 +19,7 @@ const template = /*html*/`
         <button class="button is-link" @click.stop.prevent="refreshList">Refresh List</button>
       </div>
       <div class="control" style="align-self:flex-end;">
-        <button class="button is-success" @click.stop.prevent="loadData">Load Data</button>
+        <button class="button is-success" @click.stop.prevent="loadData" :disabled="!selectedResult">Load Data</button>
       </div>
     </div>
   </div>
@@ -26,14 +27,17 @@ const template = /*html*/`
     <thead>
       <tr>
         <th><abbr title="Name">File Name</abbr></th>
+        <th><abbr title="Data">File Data</abbr></th>
         <th><abbr title="Img">Image</abbr></th>
       </tr>
     </thead>
     <tbody>
       <tr v-for="file of results.files">
-        <td>{{ file }}</td>
+        <td>{{ file.image }}</td>
+        <!-- td v-html="file.txt"></td -->
+        <td>TBD</td>
         <td>
-          <img width="200" :src="'/results/' + selectedResult + '/' + file + '.jpg'">
+          <img width="320" :src="'/emerson-results/yolo/' + selectedResult + '/' + file.image">
         </td>
       </tr>
     </tbody>

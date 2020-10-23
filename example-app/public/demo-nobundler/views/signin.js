@@ -1,12 +1,3 @@
-/*
-<div ref="topRef" class="parent">
-  <h1 >SignIn Page</h1>
-  <input class="input" type="email" placeholder="Email" v-model="email">
-  <input class="input" type="password" placeholder="Password" v-model="password">
-  <button class="button is-primary is-medium is-fullwidth" @click="login">Login</button>
-  <p class="test-bg"><a href="../index.html">Back To Demo</a></p>
-</div>
-*/
 const template = /*html*/`
 <section ref="topRef" class="hero is-primary is-fullheight">
   <div class="hero-body">
@@ -15,7 +6,8 @@ const template = /*html*/`
         <div class="column is-5-tablet is-4-desktop is-3-widescreen">
           <form action="" class="box">
             <div style="text-align:center;display:block;">
-            <img src="https://via.placeholder.com/150" />
+              <!-- img src="https://via.placeholder.com/150" / -->
+              <img src="images/emerson-logo.png" />
             </div>
             <div class="field">
               <label for="" class="label">Email</label>

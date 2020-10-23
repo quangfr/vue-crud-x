@@ -12,7 +12,7 @@ const template = /*html*/`
       <span class="icon is-medium p-2" role="button" @click="clickLogo">
         <i class="fas fa-bars"></i>
       </span>
-      <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
+      <img src="images/emerson-brand.png" width="112" height="28">
     </a>
     <!-- a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarTopMenu" @click="clickBurger">
       <span aria-hidden="true"></span>

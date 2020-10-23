@@ -1,17 +1,17 @@
 const template = /*html*/`
 <div>
   <vcxwc-loading-overlay v-if="loading"></vcxwc-loading-overlay>
-  <h1>Predict / Infer</h1>
   <div class="tabs">
     <ul>
-      <li class="tab is-active"><a>Image View</a></li>
-      <li class="tab"><a>Table View</a></li>
+      <li class="tab is-active"><a>Process</a></li>
+      <li class="tab"><a>Results</a></li>
     </ul>
   </div>
 
-  <!-- Image View Tab -->
-  <div class="container" v-if="activeTab==='Image View'">
+  <!-- Process Tab -->
+  <div class="container" v-if="activeTab==='Process'">
     <div class="box">
+      <h1>Predict / Infer</h1>
       <div class="field is-grouped is-grouped-multiline">
         <div class="control">
           <label class="label">Job Name</label>
@@ -94,9 +94,8 @@ const template = /*html*/`
     </div>
   </div>
 
-  <!-- Table View Tab -->
-  <div class="container" v-else-if="activeTab==='Table View'">
-    <h1>Table View</h1>
+  <!-- Results Tab -->
+  <div class="container" v-else-if="activeTab==='Results'">
     <table-result></table-result>
   </div>
 </div>
@@ -122,7 +121,7 @@ export default {
   },
   setup() {
     const loading = ref(false)
-    const activeTab = ref('Image View')
+    const activeTab = ref('Process')
     const uploadRadio = ref('upload')
     const form = reactive({
       jobName: '',
@@ -151,8 +150,6 @@ export default {
       loading.value = true
       console.log('submit', form)
       try {
-        // const rv = await get('http://kuldldsccappo01.kul.apac.dell.com:8080/api/healthcheck')
-        // console.log(rv)
         const rv = await post('http://kuldldsccappo01.kul.apac.dell.com:8080/api/emerson', {
           yolov5Model: form.yolov5Model,
           yolov5ConfThreshold: form.yolov5ConfThreshold,
@@ -160,6 +157,7 @@ export default {
         })
         console.log(rv)
       } catch (e) {
+        // alert('Error', e.toString())
       }
       loading.value = false
     }
