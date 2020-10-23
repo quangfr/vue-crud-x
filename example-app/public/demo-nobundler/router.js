@@ -1,7 +1,7 @@
 import store from './store.js'
 
 const { createRouter, createWebHistory } = VueRouter
-const routerHistory = createWebHistory()
+const routerHistory = createWebHistory('/emerson/')
 
 const AuthGuard = async (to, from, next) => {
   // console.log('AuthGuard', store)

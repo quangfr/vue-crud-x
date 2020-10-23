@@ -1,5 +1,6 @@
 const template = /*html*/`
 <div>
+  <vcxwc-loading-overlay v-if="loading"></vcxwc-loading-overlay>
   <h1>Predict / Infer</h1>
   <div class="tabs">
     <ul>
@@ -30,9 +31,8 @@ const template = /*html*/`
         <div class="control">
           <label class="label">Select yolov5 Model</label>
           <div class="select">
-            <select>
-              <option>yolov5 Model 1</option>
-              <option>yolov5 Model 2</option>
+            <select v-model="form.yolov5Model">
+              <option v-for="model of yolov5Models">{{ model }}</option>
             </select>
           </div>
         </div>
@@ -44,8 +44,8 @@ const template = /*html*/`
 
         <div class="control">
           <label class="label">Image Input By</label>
-          <label class="radio"><input type="radio" name="img-input-type" value="upload" checked> Upload</label>
-          <label class="radio"><input type="radio" name="img-input-type" value="serverPath"> Server Path</label>
+          <label class="radio"><input type="radio" name="img-input-type" value="upload" v-model="form.imgInputOption" checked> Upload</label>
+          <label class="radio"><input type="radio" name="img-input-type" value="imgPath" v-model="form.imgInputOption"> Server Path</label>
         </div>
       </div>
     </div>
@@ -79,7 +79,7 @@ const template = /*html*/`
             </a>
           </div>
           <div class="control is-expanded">
-            <input class="input" type="text" v-model="form.serverPath">
+            <input class="input" type="text" v-model="form.imgPath">
           </div>
         </div>
       </div>
@@ -100,6 +100,7 @@ const template = /*html*/`
   </div>
 </div>
 `
+import { post, get } from '../../lib/esm/http.js'
 
 const { onMounted, onUnmounted, ref, reactive } = Vue
 
@@ -114,19 +115,47 @@ const { onMounted, onUnmounted, ref, reactive } = Vue
 export default {
   template,
   setup() {
+    const loading = ref(false)
     const activeTab = ref('Image View')
     const uploadRadio = ref('upload')
     const form = reactive({
       jobName: '',
       cnnModel: '',
-      yolov5Model: '',
-      yolov5ConfThreshold: 0,
-      imgInputOption: '',
-      serverPath: ''
+      yolov5Model: 'fnb_yolov5',
+      yolov5ConfThreshold: 4.0,
+      imgInputOption: 'imgPath',
+      imgPath: '/dscco_nfs/shiny-server/public/Emerson/www/Data/FlangeAndBolt/TrainingSet/316_CS_Bolt'
     })
 
-    const submit = (e) => {
+    const yolov5Models = [
+      '_20201014_1315',
+      'cosmetic_20201008',
+      'cosmetic_yolov5',
+      'fnb_yolov5',
+      'fnb_yolov5_dup',
+      'test_20201013_0724',
+      'test_20201014_1514',
+      'test_20201014_1528',
+      'wiretag_20201008',
+      'yolov5l_wiretag'
+    ]
+
+    const submit = async (e) => {
+      if (loading.value) return
+      loading.value = true
       console.log('submit', form)
+      try {
+        // const rv = await get('http://kuldldsccappo01.kul.apac.dell.com:8080/api/healthcheck')
+        // console.log(rv)
+        const rv = await post('http://kuldldsccappo01.kul.apac.dell.com:8080/api/emerson', {
+          yolov5Model: 'fnb_yolov5',
+          yolov5ConfThreshold: 4.0,
+          imgPath: '/dscco_nfs/shiny-server/public/Emerson/www/Data/FlangeAndBolt/TrainingSet/316_CS_Bolt'
+        })
+        console.log(rv)
+      } catch (e) {
+      }
+      loading.value = false
     }
     const clickTab = (e) => {
       activeTab.value = e.target.textContent
@@ -139,7 +168,7 @@ export default {
       uploadRadio.value = e.target.value
     }
     onMounted(async () => {
-      console.log('Dashboard mounted!')
+      console.log('Dashboard mounted!', post, get)
       document.querySelectorAll('input[name="img-input-type"]').forEach((el) => el.addEventListener('change', changeImgInputType))
       document.querySelectorAll('.tab').forEach((el) => el.addEventListener('click', clickTab))
     })
@@ -148,10 +177,12 @@ export default {
       document.querySelectorAll('.tab').forEach((el) => el.removeEventListener('click', clickTab))
     })
     return {
+      loading,
       submit,
       form,
       activeTab,
-      uploadRadio
+      uploadRadio,
+      yolov5Models
     }
   }
 }

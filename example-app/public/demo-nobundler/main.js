@@ -6,9 +6,10 @@ const { createApp } = Vue
 import router from './router.js'
 import store from './store.js'
 import App from './app.js'
+import './lib/esm/loading-overlay.js'
 
 const app = createApp(App)
-
+app.config.isCustomElement = tag => tag.startsWith('vcxwc-') 
 app.use(store)
 app.use(router)
 app.mount('#app')
