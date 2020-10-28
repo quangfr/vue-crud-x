@@ -3,7 +3,7 @@ const template = /*html*/`
 <div class="container">
   <vcxwc-loading-overlay v-if="loading"></vcxwc-loading-overlay>
   <div class="box">
-    <h1>Results</h1>
+    <h1>CNN Result</h1>
     <div class="field is-grouped">
 
       <div v-if="results.folders.length" class="control">
@@ -26,19 +26,12 @@ const template = /*html*/`
   <table class="table">
     <thead>
       <tr>
-        <th><abbr title="Name">File Name</abbr></th>
-        <th><abbr title="Data">File Data</abbr></th>
-        <th><abbr title="Img">Image</abbr></th>
+        <th v-for="hdrCol of results.head"><abbr :title="hdrCol">{{ hdrCol }}</abbr></th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="file of results.files">
-        <td>{{ file.image }}</td>
-        <!-- td v-html="file.txt"></td -->
-        <td>TBD</td>
-        <td>
-          <img width="320" :src="'/emerson-results/yolo/' + selectedResult + '/' + file.image">
-        </td>
+      <tr v-for="row of results.data">
+        <td v-for="col of row">{{ col }}</td>
       </tr>
     </tbody>
   </table>
@@ -54,15 +47,15 @@ export default {
     const selectedResult = ref('')
     const results = reactive({
       folders: [],
-      files: []
+      head: [],
+      data: []
     })
-    const files = reactive([])
 
     const refreshList = async (e) => {
       if (loading.value) return
       loading.value = true
       try {
-        const rv = await get('http://kuldldsccappo01.kul.apac.dell.com:8080/api/emerson/yolo/list')
+        const rv = await get('http://kuldldsccappo01.kul.apac.dell.com:8080/api/emerson/cnn/list')
         results.folders = [ ...rv.data.folders ]
         console.log(rv.data)
       } catch (e) {
@@ -75,9 +68,12 @@ export default {
       if (loading.value || !selectedResult) return
       loading.value = true
       try {
-        const rv = await get('http://kuldldsccappo01.kul.apac.dell.com:8080/api/emerson/yolo/result/' + selectedResult.value)
-        results.files = [ ...rv.data.files ]
-        console.log(rv.data)
+        const rv = await get('http://kuldldsccappo01.kul.apac.dell.com:8080/api/emerson/cnn/result/' + selectedResult.value)
+        const [ head, ...data ] = rv.data.csv
+        // console.log(rv.data)
+        results.head = head
+        results.data = data
+        console.log(results)
       } catch (e) {
         console.log(e.toString())
       }
