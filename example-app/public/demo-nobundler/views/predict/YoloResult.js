@@ -63,7 +63,7 @@ export default {
         const rv = await get('http://kuldldsccappo01.kul.apac.dell.com:8080/api/emerson/yolo/list')
         results.folders = [ ...rv.data.folders ]
         console.log(rv.data)
-      } catch (e) {
+      } catch (err) {
         console.log(e.toString())
       }
       loading.value = false

@@ -141,8 +141,8 @@ export default {
           imgPath: '/dscco_nfs/shiny-server/public/Emerson/www/Data/FlangeAndBolt/TrainingSet/316_CS_Bolt'
         })
         console.log(rv)
-      } catch (e) {
-        // alert('Error', e.toString())
+      } catch (err) {
+        // alert('Error', err.toString())
       }
       loading.value = false
     }
