@@ -2,6 +2,10 @@ const template = /*html*/`
 
 <div class="container">
   <vcxwc-loading-overlay v-if="loading"></vcxwc-loading-overlay>
+  <sl-dialog :label="imageName" class="dialog-overview" :open="!!imageName" @sl-hide="imageName = ''">
+    <img v-if="imageName" :src="'/emerson-results/yolo/' + selectedResult + '/' + imageName">
+    <sl-button slot="footer" type="primary" @click="imageName = ''">Close</sl-button>
+  </sl-dialog>
   <div class="box">
     <h1>Yolo Result</h1>
     <div class="field is-grouped">
@@ -36,7 +40,7 @@ const template = /*html*/`
         <td>{{ file.image }}</td>
         <td v-html="file.txt"></td>
         <td>
-          <img width="320" :src="'/emerson-results/yolo/' + selectedResult + '/' + file.image">
+          <a @click.stop.prevent="imageName = file.image"><img width="200" :src="'/emerson-results/yolo/' + selectedResult + '/' + file.image"></a>
         </td>
       </tr>
     </tbody>
@@ -49,6 +53,7 @@ const { onMounted, onUnmounted, ref, reactive } = Vue
 export default {
   template,
   setup() {
+    const imageName = ref('')
     const loading = ref(false)
     const selectedResult = ref('')
     const results = reactive({
@@ -87,7 +92,8 @@ export default {
       selectedResult,
       results,
       refreshList,
-      loadData
+      loadData,
+      imageName
     }
   }
 }
