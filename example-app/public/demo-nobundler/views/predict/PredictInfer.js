@@ -9,11 +9,14 @@ const template = /*html*/`
     </div>
     <div class="control">
       <label class="label">Select CNN Model</label>
-      <div class="select">
-        <select v-model="form.cnnModelList">
+      <sl-select :value="form.cnnModelList" @sl-select="form.cnnModelList = $event.target.value" placeholder="Select a few" multiple clearable>
+        <sl-menu-item v-for="model of cnnModels" :value="model">{{ model }}</sl-menu-item>
+      </sl-select>
+      <!-- TOREMOVE div class="select is-multiple">
+        <select v-model="form.cnnModelList" multiple size="5">
           <option v-for="model of cnnModels">{{ model }}</option>
         </select>
-      </div>
+      </div -->
     </div>
     <div class="control">
       <label class="label">Select yolov5 Model</label>
@@ -38,7 +41,7 @@ const template = /*html*/`
 <div class="box">
   <div v-if="form.imgInputOption==='upload'" class="field">
     <label class="label">Choose files(s)</label>
-    <div id="upload-file" class="file has-name is-fullwidth">
+    <div id="upload-file" class="file has-name is-fullwidth" @change="fileChange">
       <label class="file-label">
         <input class="file-input" type="file" name="work-images" multiple>
         <span class="file-cta">
@@ -50,7 +53,7 @@ const template = /*html*/`
           </span>
         </span>
         <span class="file-name">
-          Screen Shot 2017-07-29 at 15.54.25.png
+          {{ fileCount }}
         </span>
       </label>
     </div>
@@ -86,11 +89,12 @@ export default {
   template,
   setup() {
     const loading = ref(false)
+    const fileCount = ref('No Files Uploaded')
 
     const uploadRadio = ref('imgPath')
     const form = reactive({
       jobName: '',
-      cnnModelList: 'fnb_multiclass_lenet5',
+      cnnModelList: ['fnb_multiclass_lenet5'],
       yolov5Model: '', // 'fnb_yolov5',
       yolov5ConfThreshold: 0.4,
       imgInputOption: 'imgPath',
@@ -124,7 +128,7 @@ export default {
       'gh_test_201016_1021',
       'sg_test_201008_1139',
       'wiretag_cnn2_full',
-      'wiretag_cnn2_full',
+      'wiretag_cnn3_full',
       'wiretag_lenet5_full',
     ]
 
@@ -134,6 +138,7 @@ export default {
       console.log('submit', form)
       try {
         const rv = await post('http://kuldldsccappo01.kul.apac.dell.com:8080/api/emerson', {
+          useUpload: uploadRadio === 'upload',
           jobName: form.jobName,
           cnnModelList: form.cnnModelList,
           yolov5Model: form.yolov5Model,
@@ -143,6 +148,41 @@ export default {
         console.log(rv)
       } catch (err) {
         // alert('Error', err.toString())
+      }
+      loading.value = false
+    }
+
+    const fileChange = async (e) => {
+      if (loading.value) return
+      loading.value = true
+
+      fileCount.value = 'Uploading Files...'
+
+      console.log(e)
+      if (e.target.files.length > 0) {
+        try {
+          const formData = new FormData()
+          for (const file of e.target.files) {
+            formData.append('photos', file, file.name);
+          }
+          const res = await fetch('http://kuldldsccappo01.kul.apac.dell.com:8080/api/uploads', {
+            method: 'POST', body: formData
+          })
+          const rv = await res.json()
+          console.log(rv)
+
+          fileCount.value = e.target.files.length + ' Files Uploaded'
+          // const fileName = e.target.querySelector('#file-js-example .file-name');
+          // // fileName.textContent = e.target.files.length + ' Files Uploaded';
+          // console.log('fileName', fileName, e.target)
+
+          // e.target.files = []
+        } catch (err) {
+          console.log('err', err)
+          fileCount.value = 'Error Uploading Files...'
+        }
+      } else {
+        fileCount.value = 'No Files Chosen...'
       }
       loading.value = false
     }
@@ -162,7 +202,9 @@ export default {
       form,
       uploadRadio,
       yolov5Models,
-      cnnModels
+      cnnModels,
+      fileChange,
+      fileCount
     }
   }
 }

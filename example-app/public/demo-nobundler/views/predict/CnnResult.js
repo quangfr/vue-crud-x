@@ -23,18 +23,25 @@ const template = /*html*/`
       </div>
     </div>
   </div>
-  <table class="table">
-    <thead>
-      <tr>
-        <th v-for="hdrCol of results.head"><abbr :title="hdrCol">{{ hdrCol }}</abbr></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="row of results.data">
-        <td v-for="col of row">{{ col }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <div v-for="(val, k, index) in results.files" :key="index">
+    <h3>{{ k }}</h3>
+    <!-- li v-for="(csv, index2) of val">{{ index2 }} {{ csv }}</li -->
+    <table class="table">
+      <template v-for="(csv, index2) of val">
+        <thead v-if="index2===0" :key="index2">
+          <tr>
+            <th v-for="(hdrCol, index3) of csv" :key="index3"><abbr :title="hdrCol">{{ hdrCol }}</abbr></th>
+          </tr>
+        </thead>
+        <tbody v-else :key="index2">
+          <tr>
+            <td v-for="(col, index4) of csv" :key="index4">{{ col }}</td>
+          </tr>
+        </tbody>
+      </template>
+    </table>
+    <hr/>
+  </div>
 </div>
 `
 import { post, get } from '../../lib/esm/http.js'
@@ -47,8 +54,7 @@ export default {
     const selectedResult = ref('')
     const results = reactive({
       folders: [],
-      head: [],
-      data: []
+      files: {}
     })
 
     const refreshList = async (e) => {
@@ -69,11 +75,12 @@ export default {
       loading.value = true
       try {
         const rv = await get('http://kuldldsccappo01.kul.apac.dell.com:8080/api/emerson/cnn/result/' + selectedResult.value)
-        const [ head, ...data ] = rv.data.csv
-        // console.log(rv.data)
-        results.head = head
-        results.data = data
-        console.log(results)
+        console.log(rv.data.csv)
+        results.files = rv.data.csv
+        // const [ head, ...data ] = rv.data.csv
+        // results.head = head
+        // results.data = data
+        // console.log(results)
       } catch (e) {
         console.log(e.toString())
       }

@@ -9,7 +9,7 @@ import App from './app.js'
 import './lib/esm/loading-overlay.js'
 
 const app = createApp(App)
-app.config.isCustomElement = tag => tag.startsWith('vcxwc-') 
+app.config.isCustomElement = tag => tag.startsWith('vcxwc-') || tag.startsWith('sl-')
 app.use(store)
 app.use(router)
 app.mount('#app')
